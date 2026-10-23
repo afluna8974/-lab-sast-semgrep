@@ -1,0 +1,38 @@
+rules:
+  # Regla 1: contrasenas escritas directamente en el codigo
+  - id: contrasena-en-codigo
+    languages: [javascript]
+    severity: ERROR
+    message: >-
+      Contrasena escrita directamente en el codigo ($KEY). Cualquiera con acceso
+      al repositorio puede verla. Use variables de entorno o un gestor de secretos.
+    metadata:
+      cwe: "CWE-259: Use of Hard-coded Password"
+      owasp: "A07:2021 - Identification and Authentication Failures"
+      autor: "Equipo del laboratorio SAST"
+    patterns:
+      - pattern-either:
+          - pattern: '$FUNC(..., {..., $KEY: "...", ...}, ...)'
+          - pattern: '$OBJ.$KEY = "..."'
+      - metavariable-regex:
+          metavariable: $KEY
+          regex: (?i)^(password|passwd|pwd|pass|contrasena|clave)$
+
+  # Regla 2: inyeccion SQL usando analisis de flujo (taint)
+  - id: inyeccion-sql-concatenada
+    languages: [javascript]
+    severity: ERROR
+    message: >-
+      Un dato que viene del usuario (req.query, req.params o req.body) llega a una
+      consulta SQL. Esto permite inyeccion SQL. Use consultas parametrizadas con "?".
+    metadata:
+      cwe: "CWE-89: SQL Injection"
+      owasp: "A03:2021 - Injection"
+      autor: "Equipo del laboratorio SAST"
+    mode: taint
+    pattern-sources:
+      - pattern: req.query
+      - pattern: req.params
+      - pattern: req.body
+    pattern-sinks:
+      - pattern: $DB.query(...)

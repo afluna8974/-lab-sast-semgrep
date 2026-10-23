@@ -1,0 +1,11 @@
+{
+  "name": "app-vulnerable",
+  "version": "1.0.0",
+  "description": "App vulnerable a proposito para el laboratorio SAST",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql": "^2.18.1"
+  }
+}
