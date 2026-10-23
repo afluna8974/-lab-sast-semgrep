@@ -23,8 +23,8 @@ rules:
     languages: [javascript]
     severity: ERROR
     message: >-
-      Un dato que viene del usuario (req.query, req.params o req.body) llega a una
-      consulta SQL. Esto permite inyeccion SQL. Use consultas parametrizadas con "?".
+      Un dato que viene del usuario (req.query, req.params o req.body) llega al texto
+      de una consulta SQL. Esto permite inyeccion SQL. Use consultas parametrizadas con "?".
     metadata:
       cwe: "CWE-89: SQL Injection"
       owasp: "A03:2021 - Injection"
@@ -35,4 +35,6 @@ rules:
       - pattern: req.params
       - pattern: req.body
     pattern-sinks:
-      - pattern: $DB.query(...)
+      - patterns:
+          - pattern: $DB.query($SQL, ...)
+          - focus-metavariable: $SQL
